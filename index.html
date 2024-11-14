@@ -3,14 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Max Chung's Portfolio</title>
-    <link rel="icon" type="image/x-icon" href="assets/icon.png" sizes="32x32">
+    <meta name="title" content="Max Chung's Portfolio">
+    <meta name="description" content="Max Chung's interactive 3D portfolio">
+    <meta name="keywords" content="Max Chung, Chi Han Chung, ChiHan Chung, three.js, Portfolio, 3D Portfolio, Interactive Portfolio, Terminal Portfolio">
+    <meta name="author" content="Max Chung">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://maxchung525-2.github.io/">
+    <meta property="og:title" content="Max Chung's Portfolio">
+    <meta property="og:description" content="Max Chung's interactive 3D portfolio">
+    <meta property="og:image" content="assets/preview.png">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://maxchung525-2.github.io/">
+    <meta property="twitter:title" content="Max Chung's Portfolio">
+    <meta property="twitter:description" content="Max Chung's interactive 3D portfolio">
+    <meta property="twitter:image" content="assets/preview.png">
+
+    <link rel="icon" type="image/png" href="assets/icon.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="assets/icon.png">
+
     <link rel="stylesheet" href="style2.css">
+
+    <link rel="preload" href="assets/computer terminal.glb" as="fetch" crossorigin>
+    <link rel="preload" href="assets/coffee cup.glb" as="fetch" crossorigin>
 </head>
 <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <main id="app">
+        <noscript>
+            <p>Please enable JavaScript to view this interactive portfolio.</p>
+        </noscript>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js" defer></script>
     <script type="module" src="main2.js"></script>
+
+    <script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "Person",
+        "name": "Max Chung",
+        "url": "https://maxchung525-2.github.io/",
+        "sameAs": [
+            "https://github.com/maxchung525",
+            "https://www.linkedin.com/in/chi-han-chung-146776277/"
+        ],
+        "jobTitle": "Student and Developer",
+        "description": "Interactive 3D portfolio showcasing web development projects"
+    }
+    </script>
 </body>
 </html>
