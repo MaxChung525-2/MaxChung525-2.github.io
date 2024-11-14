@@ -13,6 +13,7 @@ class InputManager {
         this.fullCommandHistory = [];
         this.inProjectDir = false;
         this.inNotesDir = false;
+        this.inSocialsDir = false;
 
         // Initial startup messages that stay at the top
         this.startupMessages = [
@@ -62,15 +63,18 @@ class InputManager {
     updateScreen() {
         const cursor = this.cursorVisible && this.isActive ? '█' : ' ';
         
-        // Combine all lines including the current input line
+        // Get current input with cursor
+        const currentInputLine = `${this.getPrompt()} ${this.currentInput}${cursor}`;
+        
+        // Combine all lines
         const allLines = [
             ...this.startupMessages,
             ...this.commandHistory,
-            `${this.getPrompt()} ${this.currentInput}${cursor}`
+            currentInputLine
         ];
 
-        // Calculate total lines and max scroll offset
-        const totalLines = allLines.length;
+        // Calculate total lines including wraps
+        const totalLines = allLines.length + (this.previousWraps || 0);
         const maxScroll = Math.max(0, totalLines - this.maxVisibleLines);
         
         // Ensure scroll offset is within bounds
@@ -82,11 +86,19 @@ class InputManager {
             this.scrollOffset + this.maxVisibleLines
         );
         
-        // Update the screen content
+        // Update screen and store wrap count
         const currentWraps = this.screenManager.setContent(visibleLines);
-
-        // Store wrap count for next comparison
         this.previousWraps = currentWraps;
+
+        // If we're at the bottom and there are wraps, adjust scroll
+        if (this.scrollOffset >= maxScroll - 1 && currentWraps > 0) {
+            this.scrollOffset = Math.min(this.scrollOffset + currentWraps, maxScroll);
+            // Update screen again with new scroll position
+            this.screenManager.setContent(allLines.slice(
+                this.scrollOffset,
+                this.scrollOffset + this.maxVisibleLines
+            ));
+        }
     }
 
     handleCommand(command) {
@@ -98,27 +110,34 @@ class InputManager {
         
         const response = this.processCommand(command);
         
-        // Always process response, even if empty
-        response.split('\n').forEach(line => {
-            if (line) {  // Only add non-empty lines
-                this.commandHistory.push(line);
-            }
-        });
+        // Split response into lines and add non-empty ones
+        const responseLines = response.split('\n').filter(line => line);
+        this.commandHistory.push(...responseLines);
 
-        // Calculate total lines including all content
-        const totalLines = this.startupMessages.length + this.commandHistory.length + 1;
+        // Calculate total lines including:
+        // 1. Startup messages
+        // 2. Command history
+        // 3. Current input line
+        // 4. Any wrapped lines from the current command
+        const totalLines = this.startupMessages.length + 
+                          this.commandHistory.length + 
+                          1 + 
+                          (this.previousWraps || 0);
         
-        // Set scroll to show the last line
+        // Set scroll to show the last line, considering the visible area
         this.scrollOffset = Math.max(0, totalLines - this.maxVisibleLines);
 
+        // Reset input and history index
         this.currentInput = '';
         this.commandHistoryIndex = -1;
         this.previousWraps = 0;
+        
+        // Force update screen with new scroll position
         this.updateScreen();
     }
 
     processCommand(command) {
-        const cmd = command.toLowerCase().trim();
+        const cmd = command.trim();
         let response = '';
         
         // Handle commands based on current directory
@@ -134,6 +153,9 @@ class InputManager {
                     return MESSAGES.WHOAMI;
                 case 'ls':
                     return MESSAGES.PROJECT_LS;
+                case 'website':
+                    window.open('https://maxchung525.github.io/', '_blank');
+                    return MESSAGES.WEBSITE;
                 case 'cd':
                 case 'cd ..':
                     this.inProjectDir = false;
@@ -157,14 +179,69 @@ class InputManager {
                     return MESSAGES.WHOAMI;
                 case 'ls':
                     return MESSAGES.NOTES_LS;
+                case 'website':
+                    window.open('https://maxchung525.github.io/', '_blank');
+                    return MESSAGES.WEBSITE;
                 case 'cd':
                 case 'cd ..':
                     this.inNotesDir = false;
                     this.currentDirectory = '~';
                     response = '';  // Set empty response instead of return
                     break;
-                case 'cat note1.txt':
-                    return MESSAGES.NOTE1;
+                case 'open MATH137.pdf':
+                    window.open('assets/Math137.pdf', '_blank');
+                    return MESSAGES.OPENING_PDF ;
+                case 'open MATH136.pdf':
+                    window.open('assets/Math136.pdf', '_blank');
+                    return MESSAGES.OPENING_PDF;
+                case 'open MATH138.pdf':
+                    window.open('assets/Math138.pdf', '_blank');
+                    return MESSAGES.OPENING_PDF;
+                case 'open MATH235.pdf':
+                    window.open('assets/Math235.pdf', '_blank');
+                    return MESSAGES.OPENING_PDF;
+                case 'open MATH237.pdf':
+                    window.open('assets/Math237.pdf', '_blank');
+                    return MESSAGES.OPENING_PDF;
+                case 'open MTHEL131.pdf':
+                    window.open('assets/Mthel131.pdf', '_blank');
+                    return MESSAGES.OPENING_PDF;
+                case 'open ECON101.pdf':
+                    window.open('assets/Econ101.pdf', '_blank');
+                    return MESSAGES.OPENING_PDF;
+                default:
+                    return MESSAGES.COMMAND_NOT_FOUND(command);
+            }
+        } else if (this.inSocialsDir) {
+            switch(cmd) {
+                case 'help':
+                    return MESSAGES.HELP;
+                case 'clear':
+                    this.commandHistory = [];
+                    this.scrollOffset = 0;
+                    return '';
+                case 'whoami':
+                    return MESSAGES.WHOAMI;
+                case 'ls':
+                    return MESSAGES.SOCIALS_LS;
+                case 'website':
+                    window.open('https://maxchung525.github.io/', '_blank');
+                    return MESSAGES.WEBSITE;
+                case 'cd':
+                case 'cd ..':
+                    this.inSocialsDir = false;
+                    this.currentDirectory = '~';
+                    response = '';  // Set empty response instead of return
+                    break;
+                case 'open linkedin.webp':
+                    window.open('https://www.linkedin.com/in/chi-han-chung-146776277/', '_blank');
+                    return MESSAGES.LINKEDIN;
+                case 'open github.webp':
+                    window.open('https://github.com/maxchung525', '_blank');
+                    return MESSAGES.GITHUB;
+                case 'open instagram.webp':
+                    window.open('https://www.instagram.com/maxyee_kyoyu/profilecard/?igsh=aDR0dGNrMGZ1MnJo', '_blank');
+                    return MESSAGES.INSTAGRAM;
                 default:
                     return MESSAGES.COMMAND_NOT_FOUND(command);
             }
@@ -181,6 +258,11 @@ class InputManager {
                     return MESSAGES.WHOAMI;
                 case 'ls':
                     return MESSAGES.LS;
+                case 'cd':
+                    return MESSAGES.MAIN_CD;
+                case 'website':
+                    window.open('https://maxchung525.github.io/', '_blank');
+                    return MESSAGES.WEBSITE;
                 case 'cd notes':
                     this.inNotesDir = true;
                     this.currentDirectory = '~/notes';
@@ -189,6 +271,11 @@ class InputManager {
                 case 'cd projects':
                     this.inProjectDir = true;
                     this.currentDirectory = '~/projects';
+                    response = '';  // Set empty response instead of return
+                    break;
+                case 'cd socials':
+                    this.inSocialsDir = true;
+                    this.currentDirectory = '~/socials';
                     response = '';  // Set empty response instead of return
                     break;
                 case 'cat about.txt':

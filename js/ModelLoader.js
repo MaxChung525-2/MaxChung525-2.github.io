@@ -5,7 +5,21 @@ class ModelLoader {
         this.loader = new THREE.GLTFLoader();
     }
 
-    loadModel() {
+    async loadModel() {
+        try {
+            // Load both models
+            const [computerModel, coffeeModel] = await Promise.all([
+                this.loadComputerModel(),
+                this.loadCoffeeModel()
+            ]);
+
+            return { computerModel, coffeeModel };
+        } catch (error) {
+            console.error('Error loading models:', error);
+        }
+    }
+
+    loadComputerModel() {
         return new Promise((resolve, reject) => {
             this.loader.load(
                 'assets/computer terminal.glb',
@@ -21,12 +35,43 @@ class ModelLoader {
                     resolve(model);
                 },
                 (xhr) => {
-                    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                    console.log('Computer: ' + (xhr.loaded / xhr.total * 100) + '% loaded');
                 },
-                (error) => {
-                    console.error('An error occurred loading the model:', error);
-                    reject(error);
-                }
+                reject
+            );
+        });
+    }
+
+    loadCoffeeModel() {
+        return new Promise((resolve, reject) => {
+            this.loader.load(
+                'assets/coffee cup.glb',
+                (gltf) => {
+                    const model = gltf.scene;
+                    // Adjust these values to position the cup correctly
+                    model.scale.set(1, 1, 1);  // Adjust scale if needed
+                    model.position.set(1.5, 0, 0.5);  // Position to the right of computer
+                    model.rotation.y = -Math.PI / 6;  // Slight rotation for better view
+                    
+                    model.traverse((node) => {
+                        if (node.isMesh) {
+                            node.castShadow = true;
+                            node.receiveShadow = true;
+                            // Adjust material properties if needed
+                            if (node.material) {
+                                node.material.roughness = 0.5;
+                                node.material.metalness = 0.3;
+                            }
+                        }
+                    });
+                    
+                    this.scene.add(model);
+                    resolve(model);
+                },
+                (xhr) => {
+                    console.log('Coffee cup: ' + (xhr.loaded / xhr.total * 100) + '% loaded');
+                },
+                reject
             );
         });
     }

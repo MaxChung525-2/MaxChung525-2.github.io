@@ -8,19 +8,25 @@ export const MESSAGES = {
         '  ls       - List directory contents',
         '  cd       - Change directory',
         '  cat      - Concatenate .txt files',
-        '  open     - Open .pdf files',
+        '  open     - Open .pdf & .webp sites',
         '  clear    - Clear terminal screen',
         '  whoami   - Display current user',
         'Navigation:',
         '  ↑/↓      - Navigate command history\n',
         '----------------------------------',
-        '  website  - if you don\'t know what to do...'
+        '  website  - if you don\'t know what to do'
     ].join('\n'),
 
     WHOAMI: 'Max\'s employer',
 
-    LS: 'about.txt   contact.txt    resume.pdf \n' +
-        '/notes      /projects',
+    LS: [
+        'about.txt   contact.txt    resume.pdf',
+        '/notes      /projects      /socials'
+    ].join('\n'),
+
+    MAIN_CD: 'already at main',
+
+    WEBSITE: 'Opening website...',
 
     ABOUT: [
         'Hello! I\'m Max, a passionate STEM student',
@@ -52,7 +58,24 @@ export const MESSAGES = {
 
     // notes dir
 
-    NOTES_LS: 'note1.txt',
+    NOTES_LS: [
+        'MATH137.pdf   MATH136.pdf   MATH138.pdf',
+        'MATH235.pdf   MATH237.pdf   MTHEL131.pdf',
+        'ECON101.pdf'
+    ].join('\n'),
 
-    NOTE1: 'test',
+    OPENING_PDF: 'Opening PDF...',
+
+    // socials dir
+
+    SOCIALS_LS: [
+        'linkedin.webp      github.webp',
+        'instagram.webp'
+    ].join('\n'),
+
+    LINKEDIN: 'Opening linkedin.webp...',
+
+    GITHUB: 'Opening github.webp...',
+
+    INSTAGRAM: 'Opening instagram.webp...',
 }; 
