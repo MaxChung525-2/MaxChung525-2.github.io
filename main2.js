@@ -26,8 +26,14 @@ class App {
     }
 
     async init() {
-        // Remove createCanvas since we do it in constructor now
-        await this.modelLoader.loadModel();
+        // Load all models
+        const models = await this.modelLoader.loadModel();
+        
+        // Store references if needed
+        this.computerModel = models.computerModel;
+        this.coffeeModel = models.coffeeModel;
+        this.leftJoystickModel = models.leftJoystickModel;
+        this.rightJoystickModel = models.rightJoystickModel;
         
         window.addEventListener('resize', () => this.sceneManager.onWindowResize(), false);
         this.animate();
