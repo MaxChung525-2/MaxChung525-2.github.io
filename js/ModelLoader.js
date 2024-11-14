@@ -8,18 +8,20 @@ class ModelLoader {
     async loadModel() {
         try {
             // Load all models
-            const [computerModel, coffeeModel, leftJoystickModel, rightJoystickModel] = await Promise.all([
+            const [computerModel, coffeeModel, leftJoystickModel, rightJoystickModel, pictureFrameModel] = await Promise.all([
                 this.loadComputerModel(),
                 this.loadCoffeeModel(),
                 this.loadLeftJoystickModel(),
-                this.loadRightJoystickModel()
+                this.loadRightJoystickModel(),
+                this.loadPictureFrameModel()
             ]);
 
             return { 
                 computerModel, 
                 coffeeModel, 
                 leftJoystickModel, 
-                rightJoystickModel 
+                rightJoystickModel,
+                pictureFrameModel 
             };
         } catch (error) {
             console.error('Error loading models:', error);
@@ -29,7 +31,7 @@ class ModelLoader {
     loadComputerModel() {
         return new Promise((resolve, reject) => {
             this.loader.load(
-                'assets/computer terminal.glb',
+                'assets/models/computer terminal.glb',
                 (gltf) => {
                     const model = gltf.scene;
                     model.scale.set(1, 1, 1);
@@ -52,12 +54,12 @@ class ModelLoader {
     loadCoffeeModel() {
         return new Promise((resolve, reject) => {
             this.loader.load(
-                'assets/coffee cup.glb',
+                'assets/models/coffee cup.glb',
                 (gltf) => {
                     const model = gltf.scene;
                     // Adjust these values to position the cup correctly
                     model.scale.set(1, 1, 1);  // Adjust scale if needed
-                    model.position.set(-1.3, 0, 0.5);  // Position to the right of computer
+                    model.position.set(-1.8, 0, 0.7);  // Position to the right of computer
                     model.rotation.y = -Math.PI / 6;  // Slight rotation for better view
                     
                     model.traverse((node) => {
@@ -86,7 +88,7 @@ class ModelLoader {
     loadLeftJoystickModel() {
         return new Promise((resolve, reject) => {
             this.loader.load(
-                'assets/left joystick.glb',
+                'assets/models/left joystick.glb',
                 (gltf) => {
                     const model = gltf.scene;
                     // Position left joystick
@@ -119,7 +121,7 @@ class ModelLoader {
     loadRightJoystickModel() {
         return new Promise((resolve, reject) => {
             this.loader.load(
-                'assets/right joystick.glb',
+                'assets/models/right joystick.glb',
                 (gltf) => {
                     const model = gltf.scene;
                     // Position right joystick
@@ -143,6 +145,39 @@ class ModelLoader {
                 },
                 (xhr) => {
                     console.log('Right Joystick: ' + (xhr.loaded / xhr.total * 100) + '% loaded');
+                },
+                reject
+            );
+        });
+    }
+
+    loadPictureFrameModel() {
+        return new Promise((resolve, reject) => {
+            this.loader.load(
+                'assets/models/picture frame.glb',
+                (gltf) => {
+                    const model = gltf.scene;
+                    // Adjust these values to position the frame correctly
+                    model.scale.set(1, 1, 1);  // Adjust scale if needed
+                    model.position.set(-1.5, 0, 0.2);  // Adjust position as needed
+                    //model.rotation.y = -Math.PI / 4;  // Adjust rotation as needed
+                    
+                    model.traverse((node) => {
+                        if (node.isMesh) {
+                            node.castShadow = true;
+                            node.receiveShadow = true;
+                            if (node.material) {
+                                node.material.roughness = 0.5;
+                                node.material.metalness = 0.3;
+                            }
+                        }
+                    });
+                    
+                    this.scene.add(model);
+                    resolve(model);
+                },
+                (xhr) => {
+                    console.log('Picture Frame: ' + (xhr.loaded / xhr.total * 100) + '% loaded');
                 },
                 reject
             );

@@ -189,25 +189,25 @@ class InputManager {
                     response = '';  // Set empty response instead of return
                     break;
                 case 'open MATH137.pdf':
-                    window.open('assets/Math137.pdf', '_blank');
-                    return MESSAGES.OPENING_PDF ;
+                    window.open('assets/pdf/Math137.pdf', '_blank');
+                    return MESSAGES.OPENING_PDF;
                 case 'open MATH136.pdf':
-                    window.open('assets/Math136.pdf', '_blank');
+                    window.open('assets/pdf/Math136.pdf', '_blank');
                     return MESSAGES.OPENING_PDF;
                 case 'open MATH138.pdf':
-                    window.open('assets/Math138.pdf', '_blank');
+                    window.open('assets/pdf/Math138.pdf', '_blank');
                     return MESSAGES.OPENING_PDF;
                 case 'open MATH235.pdf':
-                    window.open('assets/Math235.pdf', '_blank');
+                    window.open('assets/pdf/Math235.pdf', '_blank');
                     return MESSAGES.OPENING_PDF;
                 case 'open MATH237.pdf':
-                    window.open('assets/Math237.pdf', '_blank');
+                    window.open('assets/pdf/Math237.pdf', '_blank');
                     return MESSAGES.OPENING_PDF;
                 case 'open MTHEL131.pdf':
-                    window.open('assets/Mthel131.pdf', '_blank');
+                    window.open('assets/pdf/Mthel131.pdf', '_blank');
                     return MESSAGES.OPENING_PDF;
                 case 'open ECON101.pdf':
-                    window.open('assets/Econ101.pdf', '_blank');
+                    window.open('assets/pdf/Econ101.pdf', '_blank');
                     return MESSAGES.OPENING_PDF;
                 default:
                     return MESSAGES.COMMAND_NOT_FOUND(command);
@@ -281,7 +281,7 @@ class InputManager {
                 case 'cat about.txt':
                     return MESSAGES.ABOUT;
                 case 'open resume.pdf':
-                    window.open('assets/resume.pdf', '_blank');
+                    window.open('assets/pdf/resume.pdf', '_blank');
                     return MESSAGES.RESUME;
                 case 'cat contact.txt':
                     return MESSAGES.CONTACT;
