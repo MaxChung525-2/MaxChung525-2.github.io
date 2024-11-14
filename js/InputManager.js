@@ -97,27 +97,29 @@ class InputManager {
         this.fullCommandHistory.push(command);
         
         const response = this.processCommand(command);
-        if (response) {
-            // Split response into lines and add each line to command history
-            response.split('\n').forEach(line => {
+        
+        // Always process response, even if empty
+        response.split('\n').forEach(line => {
+            if (line) {  // Only add non-empty lines
                 this.commandHistory.push(line);
-            });
+            }
+        });
 
-            // Calculate total lines including all content
-            const totalLines = this.startupMessages.length + this.commandHistory.length + 1;
-            
-            // Set scroll to show the last line
-            this.scrollOffset = Math.max(0, totalLines - this.maxVisibleLines);
-        }
+        // Calculate total lines including all content
+        const totalLines = this.startupMessages.length + this.commandHistory.length + 1;
+        
+        // Set scroll to show the last line
+        this.scrollOffset = Math.max(0, totalLines - this.maxVisibleLines);
 
         this.currentInput = '';
         this.commandHistoryIndex = -1;
-        this.previousWraps = 0;  // Reset wrap count
+        this.previousWraps = 0;
         this.updateScreen();
     }
 
     processCommand(command) {
         const cmd = command.toLowerCase().trim();
+        let response = '';
         
         // Handle commands based on current directory
         if (this.inProjectDir) {
@@ -136,16 +138,14 @@ class InputManager {
                 case 'cd ..':
                     this.inProjectDir = false;
                     this.currentDirectory = '~';
-                    return;
+                    response = '';  // Set empty response instead of return
+                    break;
                 case 'cat project1.txt':
                     return MESSAGES.PROJECT1;
                 default:
                     return MESSAGES.COMMAND_NOT_FOUND(command);
             }
-        }
-
-        // Handle commands based on current directory
-        if (this.inNotesDir) {
+        } else if (this.inNotesDir) {
             switch(cmd) {
                 case 'help':
                     return MESSAGES.HELP;
@@ -161,42 +161,50 @@ class InputManager {
                 case 'cd ..':
                     this.inNotesDir = false;
                     this.currentDirectory = '~';
-                    return;
+                    response = '';  // Set empty response instead of return
+                    break;
+                case 'cat note1.txt':
+                    return MESSAGES.NOTE1;
+                default:
+                    return MESSAGES.COMMAND_NOT_FOUND(command);
+            }
+        } else {
+            // Main directory commands
+            switch(cmd) {
+                case 'help':
+                    return MESSAGES.HELP;
+                case 'clear':
+                    this.commandHistory = [];
+                    this.scrollOffset = 0;
+                    return '';
+                case 'whoami':
+                    return MESSAGES.WHOAMI;
+                case 'ls':
+                    return MESSAGES.LS;
+                case 'cd notes':
+                    this.inNotesDir = true;
+                    this.currentDirectory = '~/notes';
+                    response = '';  // Set empty response instead of return
+                    break;
+                case 'cd projects':
+                    this.inProjectDir = true;
+                    this.currentDirectory = '~/projects';
+                    response = '';  // Set empty response instead of return
+                    break;
+                case 'cat about.txt':
+                    return MESSAGES.ABOUT;
+                case 'open resume.pdf':
+                    window.open('assets/resume.pdf', '_blank');
+                    return MESSAGES.RESUME;
+                case 'cat contact.txt':
+                    return MESSAGES.CONTACT;
                 default:
                     return MESSAGES.COMMAND_NOT_FOUND(command);
             }
         }
-        
-        // Main directory commands
-        switch(cmd) {
-            case 'help':
-                return MESSAGES.HELP;
-            case 'clear':
-                this.commandHistory = [];
-                this.scrollOffset = 0;
-                return '';
-            case 'whoami':
-                return MESSAGES.WHOAMI;
-            case 'ls':
-                return MESSAGES.LS;
-            case 'cd notes':
-                this.inNotesDir = true;
-                this.currentDirectory = '~/notes';
-                return;
-            case 'cd projects':
-                this.inProjectDir = true;
-                this.currentDirectory = '~/projects';
-                return;
-            case 'cat about.txt':
-                return MESSAGES.ABOUT;
-            case 'open resume.pdf':
-                window.open('assets/resume.pdf', '_blank');
-                return MESSAGES.RESUME;
-            case 'cat contact.txt':
-                return MESSAGES.CONTACT;
-            default:
-                return MESSAGES.COMMAND_NOT_FOUND(command);
-        }
+
+        // Always return a response, even if empty
+        return response;
     }
 
     setupEventListeners() {
