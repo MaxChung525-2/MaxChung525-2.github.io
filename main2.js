@@ -1,0 +1,44 @@
+import SceneManager from './js/SceneManager.js';
+import ScreenManager from './js/ScreenManager.js';
+import ModelLoader from './js/ModelLoader.js';
+import Controls from './js/Controls.js';
+import InputManager from './js/InputManager.js';
+
+class App {
+    constructor() {
+        this.sceneManager = new SceneManager();
+        this.screenManager = new ScreenManager();
+        
+        // Create canvas and set initial content immediately
+        this.screenManager.createCanvas();
+        
+        this.inputManager = new InputManager(this.screenManager);
+        this.modelLoader = new ModelLoader(this.sceneManager.scene, this.screenManager);
+        this.controls = new Controls(
+            this.sceneManager.camera, 
+            this.sceneManager.renderer,
+            this.inputManager
+        );
+        
+        this.controls.setScene(this.sceneManager.scene);
+        
+        this.init();
+    }
+
+    async init() {
+        // Remove createCanvas since we do it in constructor now
+        await this.modelLoader.loadModel();
+        
+        window.addEventListener('resize', () => this.sceneManager.onWindowResize(), false);
+        this.animate();
+    }
+
+    animate() {
+        requestAnimationFrame(() => this.animate());
+        this.controls.update();
+        this.sceneManager.renderer.render(this.sceneManager.scene, this.sceneManager.camera);
+    }
+}
+
+// Start the application
+new App();
