@@ -6,12 +6,11 @@ class SceneManager {
         this.setupCamera();
         this.setupRenderer();
         this.setupLights();
-        this.setupPlane();
     }
 
     setupCamera() {
         this.camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.camera.position.set(7/5, 5/6, 10/5);
+        this.camera.position.set(0.1, 2, 10);
     }
 
     setupRenderer() {
@@ -49,21 +48,6 @@ class SceneManager {
         spotLight.shadow.mapSize.height = 2048;
         spotLight.shadow.bias = -0.0001;
         this.scene.add(spotLight);
-    }
-
-    setupPlane() {
-        const planeGeometry = new THREE.PlaneGeometry(100, 100, 32, 32);
-        const planeMaterial = new THREE.MeshStandardMaterial({ 
-            color: 0x030303,
-            roughness: 0.95,
-            metalness: 0.0,
-            side: THREE.DoubleSide
-        });
-        const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-        plane.rotation.x = -Math.PI / 2;
-        plane.position.y = -0.001;
-        plane.receiveShadow = true;
-        this.scene.add(plane);
     }
 
     onWindowResize() {

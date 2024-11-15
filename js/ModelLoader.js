@@ -7,21 +7,20 @@ class ModelLoader {
 
     async loadModel() {
         try {
-            // Load all models
-            const [computerModel, coffeeModel, leftJoystickModel, /*rightJoystickModel*/, pictureFrameModel] = await Promise.all([
+            const [computerModel, coffeeModel, tableModel, pictureFrameModel, penholderModel] = await Promise.all([
                 this.loadComputerModel(),
                 this.loadCoffeeModel(),
-                this.loadLeftJoystickModel(),
-                //this.loadRightJoystickModel(),
-                this.loadPictureFrameModel()
+                this.loadTableModel(),
+                this.loadPictureFrameModel(),
+                this.loadPenholderModel()
             ]);
-    
+
             return { 
                 computerModel, 
                 coffeeModel, 
-                leftJoystickModel,
-                //rightJoystickModel,
-                pictureFrameModel 
+                tableModel,
+                pictureFrameModel,
+                penholderModel
             };
         } catch (error) {
             console.error('Error loading models:', error);
@@ -59,7 +58,7 @@ class ModelLoader {
                     const model = gltf.scene;
                     // Adjust these values to position the cup correctly
                     model.scale.set(1, 1, 1);  // Adjust scale if needed
-                    model.position.set(-1.3, 0, 0.5);  // Position to the right of computer
+                    model.position.set(-1.3, 0.06, 0.5);  // Position to the right of computer
                     model.rotation.y = -Math.PI / 6;  // Slight rotation for better view
                     
                     model.traverse((node) => {
@@ -85,73 +84,6 @@ class ModelLoader {
         });
     }
 
-    loadLeftJoystickModel() {
-        return new Promise((resolve, reject) => {
-            this.loader.load(
-                'assets/models/left joystick.glb',
-                (gltf) => {
-                    const model = gltf.scene;
-                    // Position left joystick
-                    model.scale.set(1, 1, 1);
-                    model.position.set(-0.9, 0, 1.3); // Left side of computer
-                    model.rotation.y = Math.PI / 6; // Slight rotation inward
-                    
-                    model.traverse((node) => {
-                        if (node.isMesh) {
-                            node.castShadow = true;
-                            node.receiveShadow = true;
-                            if (node.material) {
-                                node.material.roughness = 0.7;
-                                node.material.metalness = 0.3;
-                            }
-                        }
-                    });
-                    
-                    this.scene.add(model);
-                    resolve(model);
-                },
-                (xhr) => {
-                    console.log('Left Joystick: ' + (xhr.loaded / xhr.total * 100) + '% loaded');
-                },
-                reject
-            );
-        });
-    }
-
-    /*
-    loadRightJoystickModel() {
-        return new Promise((resolve, reject) => {
-            this.loader.load(
-                'assets/models/right joystick.glb',
-                (gltf) => {
-                    const model = gltf.scene;
-                    // Position right joystick
-                    model.scale.set(1, 1, 1);
-                    model.position.set(1.1, 0, 1); // Right side of computer
-                    model.rotation.y = -Math.PI / 6; // Slight rotation inward
-                    
-                    model.traverse((node) => {
-                        if (node.isMesh) {
-                            node.castShadow = true;
-                            node.receiveShadow = true;
-                            if (node.material) {
-                                node.material.roughness = 0.7;
-                                node.material.metalness = 0.3;
-                            }
-                        }
-                    });
-                    
-                    this.scene.add(model);
-                    resolve(model);
-                },
-                (xhr) => {
-                    console.log('Right Joystick: ' + (xhr.loaded / xhr.total * 100) + '% loaded');
-                },
-                reject
-            );
-        });
-    }
-    */
 
     loadPictureFrameModel() {
         return new Promise((resolve, reject) => {
@@ -161,7 +93,7 @@ class ModelLoader {
                     const model = gltf.scene;
                     // Adjust these values to position the frame correctly
                     model.scale.set(1, 1, 1);  // Adjust scale if needed
-                    model.position.set(-0.1, 0, -0.7);  // Adjust position as needed
+                    model.position.set(-0.08, 0.027, -0.7);  // Adjust position as needed
                     model.rotation.y = 5 * (Math.PI / 6);  // Adjust rotation as needed
                     
                     model.traverse((node) => {
@@ -200,6 +132,70 @@ class ModelLoader {
                     node.material.envMapIntensity = 1.2;
                 }
             }
+        });
+    }
+
+    // Add new method to load table
+    loadTableModel() {
+        return new Promise((resolve, reject) => {
+            this.loader.load(
+                'assets/models/table.glb',
+                (gltf) => {
+                    const model = gltf.scene;
+                    model.scale.set(1, 1, 1);  // Adjust scale if needed
+                    model.position.set(0, 0, 0);  // Adjust position if needed
+                    
+                    model.traverse((node) => {
+                        if (node.isMesh) {
+                            node.castShadow = true;
+                            node.receiveShadow = true;
+                            if (node.material) {
+                                node.material.roughness = 0.7;
+                                node.material.metalness = 0.3;
+                            }
+                        }
+                    });
+                    
+                    this.scene.add(model);
+                    resolve(model);
+                },
+                (xhr) => {
+                    console.log('Table: ' + (xhr.loaded / xhr.total * 100) + '% loaded');
+                },
+                reject
+            );
+        });
+    }
+
+    loadPenholderModel() {
+        return new Promise((resolve, reject) => {
+            this.loader.load(
+                'assets/models/penholder.glb',
+                (gltf) => {
+                    const model = gltf.scene;
+                    model.scale.set(1, 1, 1);  // Adjust scale if needed
+                    model.position.set(1.5, 0.05, 0);  // Position to the right of computer
+                    model.rotation.y = Math.PI / 6;  // Slight rotation for better view
+                    
+                    model.traverse((node) => {
+                        if (node.isMesh) {
+                            node.castShadow = true;
+                            node.receiveShadow = true;
+                            if (node.material) {
+                                node.material.roughness = 0.6;
+                                node.material.metalness = 0.4;
+                            }
+                        }
+                    });
+                    
+                    this.scene.add(model);
+                    resolve(model);
+                },
+                (xhr) => {
+                    console.log('Penholder: ' + (xhr.loaded / xhr.total * 100) + '% loaded');
+                },
+                reject
+            );
         });
     }
 }
