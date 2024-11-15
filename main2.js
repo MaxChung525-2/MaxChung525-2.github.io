@@ -32,8 +32,9 @@ class App {
         // Store references if needed
         this.computerModel = models.computerModel;
         this.coffeeModel = models.coffeeModel;
-        this.leftJoystickModel = models.leftJoystickModel;
-        this.rightJoystickModel = models.rightJoystickModel;
+        this.tableModel = models.tableModel;
+        this.pictureFrameModel = models.pictureFrameModel;
+        this.penholderModel = models.penholderModel;
         
         window.addEventListener('resize', () => this.sceneManager.onWindowResize(), false);
         this.animate();
