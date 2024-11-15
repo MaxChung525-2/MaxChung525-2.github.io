@@ -8,19 +8,19 @@ class ModelLoader {
     async loadModel() {
         try {
             // Load all models
-            const [computerModel, coffeeModel, leftJoystickModel, rightJoystickModel, pictureFrameModel] = await Promise.all([
+            const [computerModel, coffeeModel, leftJoystickModel, /*rightJoystickModel*/, pictureFrameModel] = await Promise.all([
                 this.loadComputerModel(),
                 this.loadCoffeeModel(),
                 this.loadLeftJoystickModel(),
-                this.loadRightJoystickModel(),
+                //this.loadRightJoystickModel(),
                 this.loadPictureFrameModel()
             ]);
-
+    
             return { 
                 computerModel, 
                 coffeeModel, 
-                leftJoystickModel, 
-                rightJoystickModel,
+                leftJoystickModel,
+                //rightJoystickModel,
                 pictureFrameModel 
             };
         } catch (error) {
@@ -59,7 +59,7 @@ class ModelLoader {
                     const model = gltf.scene;
                     // Adjust these values to position the cup correctly
                     model.scale.set(1, 1, 1);  // Adjust scale if needed
-                    model.position.set(-1.8, 0, 0.7);  // Position to the right of computer
+                    model.position.set(-1.3, 0, 0.5);  // Position to the right of computer
                     model.rotation.y = -Math.PI / 6;  // Slight rotation for better view
                     
                     model.traverse((node) => {
@@ -118,6 +118,7 @@ class ModelLoader {
         });
     }
 
+    /*
     loadRightJoystickModel() {
         return new Promise((resolve, reject) => {
             this.loader.load(
@@ -150,6 +151,7 @@ class ModelLoader {
             );
         });
     }
+    */
 
     loadPictureFrameModel() {
         return new Promise((resolve, reject) => {
@@ -159,8 +161,8 @@ class ModelLoader {
                     const model = gltf.scene;
                     // Adjust these values to position the frame correctly
                     model.scale.set(1, 1, 1);  // Adjust scale if needed
-                    model.position.set(-1.5, 0, 0.2);  // Adjust position as needed
-                    //model.rotation.y = -Math.PI / 4;  // Adjust rotation as needed
+                    model.position.set(-0.1, 0, -0.7);  // Adjust position as needed
+                    model.rotation.y = 5 * (Math.PI / 6);  // Adjust rotation as needed
                     
                     model.traverse((node) => {
                         if (node.isMesh) {

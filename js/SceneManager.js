@@ -11,7 +11,7 @@ class SceneManager {
 
     setupCamera() {
         this.camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.camera.position.set(7, 4, 10);
+        this.camera.position.set(7/5, 5/6, 10/5);
     }
 
     setupRenderer() {
