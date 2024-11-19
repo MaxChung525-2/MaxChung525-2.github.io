@@ -164,18 +164,15 @@ class DesktopManager {
             // Draw note items inside the window
             this.notesItems.forEach((item, index) => {
                 const icon = this.images[item.type];
-                // Customize icon sizes based on type
-                let iconSize = 64;  // default size
+                let iconSize = 64;
                 let iconWidth = iconSize;
                 let iconHeight = iconSize;
                 
-                // Custom size for exit icon
                 if (item.type === 'exit') {
-                    iconWidth = 35;  // custom width for exit icon
-                    iconHeight = 17; // custom height for exit icon
+                    iconWidth = 35;
+                    iconHeight = 17;
                 }
                 
-                // Draw the icon with custom dimensions
                 this.context.drawImage(icon, item.x, item.y, iconWidth, iconHeight);
                 
                 if (index === this.notesSelection) {
@@ -190,15 +187,16 @@ class DesktopManager {
                         selectionWidth,
                         selectionHeight
                     );
-                    this.context.globalAlpha = 1;
+                    this.context.globalAlpha = 1.0;
                 }
                 
-                // Adjust text position based on icon size
-                this.context.fillStyle = '#000000';
-                this.context.font = '12px Arial';
-                this.context.textAlign = 'center';
-                const textY = item.y + (item.type === 'exit' ? iconHeight : iconSize) + 15;
-                this.context.fillText(item.name, item.x + (item.type === 'exit' ? iconWidth/2 : iconSize/2), textY);
+                // Only draw labels for non-exit icons
+                if (item.type !== 'exit') {
+                    this.context.fillStyle = '#000000';
+                    this.context.font = '12px Arial';
+                    this.context.textAlign = 'center';
+                    this.context.fillText(item.name, item.x + iconSize/2, item.y + iconSize + 15);
+                }
             });
         }
 
@@ -239,14 +237,16 @@ class DesktopManager {
                         selectionWidth,
                         selectionHeight
                     );
-                    this.context.globalAlpha = 1;
+                    this.context.globalAlpha = 1.0;
                 }
                 
-                this.context.fillStyle = '#000000';
-                this.context.font = '12px Arial';
-                this.context.textAlign = 'center';
-                const textY = item.y + (item.type === 'exit' ? iconHeight : iconSize) + 15;
-                this.context.fillText(item.name, item.x + (item.type === 'exit' ? iconWidth/2 : iconSize/2), textY);
+                // Only draw labels for non-exit icons
+                if (item.type !== 'exit') {
+                    this.context.fillStyle = '#000000';
+                    this.context.font = '12px Arial';
+                    this.context.textAlign = 'center';
+                    this.context.fillText(item.name, item.x + iconSize/2, item.y + iconSize + 15);
+                }
             });
         }
 

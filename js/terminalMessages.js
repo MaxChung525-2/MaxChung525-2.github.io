@@ -11,10 +11,10 @@ export const MESSAGES = {
         '  open     - Open .pdf & .webp sites',
         '  clear    - Clear terminal screen',
         '  whoami   - Display current user',
+        '  website  - to old website',
         'Navigation:',
         '  ↑/↓      - Navigate command history\n',
-        '----------------------------------',
-        '  website  - if you don\'t know what to do'
+        '  quit     - to exit terminal -> desktop'
     ].join('\n'),
 
     WHOAMI: 'Max\'s employer',
