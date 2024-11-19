@@ -33,9 +33,9 @@ class DesktopManager {
         this.socialsSelection = 0;
         this.socialsItems = [
             { type: 'exit', name: 'exit', x: 730, y: 125 },
-            { type: 'linkedin', name: 'linkedin.webp', x: 280, y: 200, url: 'https://www.linkedin.com/in/max-situ/' },
-            { type: 'insta', name: 'instagram.webp', x: 400, y: 200, url: 'https://www.instagram.com/max.situ/' },
-            { type: 'github', name: 'github.webp', x: 520, y: 200, url: 'https://github.com/maxsitu' }
+            { type: 'linkedin', name: 'linkedin.webp', x: 280, y: 200, url: 'https://www.linkedin.com/in/chi-han-chung-146776277/' },
+            { type: 'insta', name: 'instagram.webp', x: 400, y: 200, url: 'https://www.instagram.com/maxyee_kyoyu/profilecard/?igsh=aDR0dGNrMGZ1MnJo' },
+            { type: 'github', name: 'github.webp', x: 520, y: 200, url: 'https://github.com/maxchung525' }
         ];
         this.setupEventListeners();
     }
