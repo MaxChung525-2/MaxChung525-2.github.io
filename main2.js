@@ -13,6 +13,7 @@ class App {
         this.screenManager.createCanvas();
         
         this.inputManager = new InputManager(this.screenManager);
+        this.inputManager.scene = this.sceneManager.scene;
         this.modelLoader = new ModelLoader(this.sceneManager.scene, this.screenManager);
         this.controls = new Controls(
             this.sceneManager.camera, 
