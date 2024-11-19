@@ -1,8 +1,10 @@
 import { MESSAGES } from './terminalMessages.js';
+import DesktopManager from './DesktopManager.js';
 
 class InputManager {
     constructor(screenManager) {
         this.screenManager = screenManager;
+        this.scene = null;  // Will be set from main.js
         this.isActive = false;
         this.currentInput = '';
         this.cursorVisible = true;
@@ -14,6 +16,8 @@ class InputManager {
         this.inProjectDir = false;
         this.inNotesDir = false;
         this.inSocialsDir = false;
+        this.desktopManager = null;
+        this.originalMaterial = null;
 
         // Initial startup messages that stay at the top
         this.startupMessages = [
@@ -285,6 +289,9 @@ class InputManager {
                     return MESSAGES.RESUME;
                 case 'cat contact.txt':
                     return MESSAGES.CONTACT;
+                case 'quit':
+                    this.switchToDesktop();
+                    return 'Switching to desktop...';
                 default:
                     return MESSAGES.COMMAND_NOT_FOUND(command);
             }
@@ -426,6 +433,69 @@ class InputManager {
         // Update the first line with current time
         this.startupMessages[0] = `TIME: ${new Date().toLocaleTimeString()}`;
         this.updateScreen();
+    }
+
+    async switchToDesktop() {
+        let screenMesh = null;
+        
+        try {
+            if (!this.scene) {
+                throw new Error('Scene not initialized');
+            }
+
+            screenMesh = this.scene.getObjectByName('Comp_Screen002_TerminalMaterial_0001');
+            if (!screenMesh) {
+                throw new Error('Screen mesh not found');
+            }
+
+            if (!this.originalMaterial) {
+                this.originalMaterial = screenMesh.material;
+            }
+
+            const desktopManager = new DesktopManager();
+            await desktopManager.createCanvas();
+            this.desktopManager = desktopManager;
+            
+            const newMaterial = this.desktopManager.createShaderMaterial();
+            if (!newMaterial) {
+                throw new Error('Failed to create shader material');
+            }
+            
+            screenMesh.material = newMaterial;
+            
+            this.desktopManager.onTerminalSelect = () => {
+                this.switchBackToTerminal();
+            };
+
+            this.isActive = false;
+
+        } catch (error) {
+            this.desktopManager = null;
+            
+            if (this.originalMaterial) {
+                this.switchBackToTerminal();
+            }
+        }
+    }
+
+    switchBackToTerminal() {
+        try {
+            const screenMesh = this.scene.getObjectByName('Comp_Screen002_TerminalMaterial_0001');
+            if (screenMesh && this.originalMaterial) {
+                screenMesh.material = this.originalMaterial;
+                
+                // Clean up desktop manager event listeners before nullifying
+                if (this.desktopManager) {
+                    this.desktopManager.cleanup();
+                    this.desktopManager = null;
+                }
+                
+                this.isActive = true;
+                this.updateScreen();
+            }
+        } catch (error) {
+            console.error('Error switching back to terminal:', error);
+        }
     }
 }
 
