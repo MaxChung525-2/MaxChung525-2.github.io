@@ -29,6 +29,7 @@ class InputManager {
             'Initializing system components... Done',
             '->> type "help" to get started',
             'System ready.',
+            'type "quit" to leave terminal',
             '',
             ''
         ];
