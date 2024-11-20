@@ -27,15 +27,18 @@ class App {
     }
 
     async init() {
-        // Load all models
-        const models = await this.modelLoader.loadModel();
-        
-        // Store references if needed
-        this.computerModel = models.computerModel;
-        this.coffeeModel = models.coffeeModel;
-        this.tableModel = models.tableModel;
-        this.pictureFrameModel = models.pictureFrameModel;
-        this.penholderModel = models.penholderModel;
+        // Load models only once
+        if (!this.modelsLoaded) {
+            const models = await this.modelLoader.loadModel();
+            this.modelsLoaded = true;
+            
+            // Store references if needed
+            this.computerModel = models.computerModel;
+            this.coffeeModel = models.coffeeModel;
+            this.tableModel = models.tableModel;
+            this.pictureFrameModel = models.pictureFrameModel;
+            this.penholderModel = models.penholderModel;
+        }
         
         window.addEventListener('resize', () => this.sceneManager.onWindowResize(), false);
         this.animate();
