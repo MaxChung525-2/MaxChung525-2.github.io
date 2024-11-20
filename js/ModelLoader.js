@@ -3,6 +3,7 @@ class ModelLoader {
         this.scene = scene;
         this.screenManager = screenManager;
         this.loader = new THREE.GLTFLoader();
+        this.loadedModels = new Set();
     }
 
     async loadModel() {
@@ -87,6 +88,11 @@ class ModelLoader {
 
     loadPictureFrameModel() {
         return new Promise((resolve, reject) => {
+            if (this.loadedModels.has('pictureFrame')) {
+                console.log('Picture Frame model already loaded');
+                return;
+            }
+
             this.loader.load(
                 'assets/models/picture frame.glb',
                 (gltf) => {
@@ -108,10 +114,14 @@ class ModelLoader {
                     });
                     
                     this.scene.add(model);
+                    this.loadedModels.add('pictureFrame');
                     resolve(model);
                 },
                 (xhr) => {
-                    console.log('Picture Frame: ' + (xhr.loaded / xhr.total * 100) + '% loaded');
+                    if (xhr.lengthComputable) {
+                        const percentComplete = (xhr.loaded / xhr.total) * 100;
+                        console.log('Picture Frame: ' + percentComplete.toFixed(2) + '% loaded');
+                    }
                 },
                 reject
             );
@@ -138,29 +148,40 @@ class ModelLoader {
     // Add new method to load table
     loadTableModel() {
         return new Promise((resolve, reject) => {
+            if (this.loadedModels.has('table')) {
+                console.log('Table model already loaded');
+                return;
+            }
+
             this.loader.load(
                 'assets/models/table.glb',
                 (gltf) => {
                     const model = gltf.scene;
-                    model.scale.set(1, 1, 1);  // Adjust scale if needed
-                    model.position.set(0, 0, 0);  // Adjust position if needed
+                    model.scale.set(1, 1, 1);
+                    model.position.set(0, 0, 0);
                     
                     model.traverse((node) => {
                         if (node.isMesh) {
-                            node.castShadow = true;
-                            node.receiveShadow = true;
                             if (node.material) {
+                                node.material.precision = "mediump";
+                                node.material.flatShading = true;
                                 node.material.roughness = 0.7;
                                 node.material.metalness = 0.3;
                             }
+                            node.castShadow = true;
+                            node.receiveShadow = true;
                         }
                     });
                     
                     this.scene.add(model);
+                    this.loadedModels.add('table');
                     resolve(model);
                 },
                 (xhr) => {
-                    console.log('Table: ' + (xhr.loaded / xhr.total * 100) + '% loaded');
+                    if (xhr.lengthComputable) {
+                        const percentComplete = (xhr.loaded / xhr.total) * 100;
+                        console.log('Table: ' + percentComplete.toFixed(2) + '% loaded');
+                    }
                 },
                 reject
             );
