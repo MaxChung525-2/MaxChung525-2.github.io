@@ -38,6 +38,11 @@ class App {
             this.tableModel = models.tableModel;
             this.pictureFrameModel = models.pictureFrameModel;
             this.penholderModel = models.penholderModel;
+
+            // Simulate 'quit' command by default to show desktop
+            if (this.inputManager) {
+                this.inputManager.switchToDesktop();
+            }
         }
         
         window.addEventListener('resize', () => this.sceneManager.onWindowResize(), false);
