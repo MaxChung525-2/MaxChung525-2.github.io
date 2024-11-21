@@ -4,6 +4,14 @@ class ModelLoader {
         this.screenManager = screenManager;
         this.loader = new THREE.GLTFLoader();
         this.loadedModels = new Set();
+        this.totalModels = 5; // Total number of models to load
+        this.loadedModelsCount = 0;
+    }
+
+    updateLoadingProgress() {
+        this.loadedModelsCount++;
+        const progress = (this.loadedModelsCount / this.totalModels) * 100;
+        console.log(`Loading progress: ${progress}%`);
     }
 
     async loadModel() {
@@ -25,6 +33,7 @@ class ModelLoader {
             };
         } catch (error) {
             console.error('Error loading models:', error);
+            throw error; // Propagate error to be handled by App class
         }
     }
 
@@ -41,6 +50,7 @@ class ModelLoader {
                     
                     this.setupScreenMaterial(model);
                     this.scene.add(model);
+                    this.updateLoadingProgress();
                     resolve(model);
                 },
                 (xhr) => {
@@ -75,6 +85,7 @@ class ModelLoader {
                     });
                     
                     this.scene.add(model);
+                    this.updateLoadingProgress();
                     resolve(model);
                 },
                 (xhr) => {
@@ -115,6 +126,7 @@ class ModelLoader {
                     
                     this.scene.add(model);
                     this.loadedModels.add('pictureFrame');
+                    this.updateLoadingProgress();
                     resolve(model);
                 },
                 (xhr) => {
@@ -175,6 +187,7 @@ class ModelLoader {
                     
                     this.scene.add(model);
                     this.loadedModels.add('table');
+                    this.updateLoadingProgress();
                     resolve(model);
                 },
                 (xhr) => {
@@ -210,6 +223,7 @@ class ModelLoader {
                     });
                     
                     this.scene.add(model);
+                    this.updateLoadingProgress();
                     resolve(model);
                 },
                 (xhr) => {
