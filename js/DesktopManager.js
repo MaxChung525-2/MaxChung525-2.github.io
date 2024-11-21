@@ -37,6 +37,15 @@ class DesktopManager {
             { type: 'insta', name: 'instagram.webp', x: 400, y: 200, url: 'https://www.instagram.com/maxyee_kyoyu/profilecard/?igsh=aDR0dGNrMGZ1MnJo' },
             { type: 'github', name: 'github.webp', x: 520, y: 200, url: 'https://github.com/maxchung525' }
         ];
+        this.isProjectsWindowOpen = false;
+        this.projectsSelection = 0;
+        this.projectsItems = [
+            { type: 'exit', name: 'exit', x: 730, y: 125 },
+            { type: 'github', name: 'SpeedType', x: 280, y: 200, url: 'https://github.com/MaxChung525/TypeSpeed' },
+            { type: 'webp', name: 'Portfolio', x: 400, y: 200, url: 'https://maxchung525.github.io/' },
+            { type: 'github', name: 'Language Tool', x: 520, y: 200, url: 'https://github.com/maxchung525/Language-Tool' },
+            { type: 'pdf', name: 'Business Int...', x: 640, y: 200, file: 'Business Intelligence Project.pdf' }
+        ];
         this.setupEventListeners();
     }
 
@@ -78,7 +87,9 @@ class DesktopManager {
             socialsFolder: 'assets/pictures/socials folder.png',
             linkedin: 'assets/pictures/linkedin.png',
             insta: 'assets/pictures/insta.png',
-            github: 'assets/pictures/github.png'
+            github: 'assets/pictures/github.png',
+            projectsFolder: 'assets/pictures/projects folder.png',
+            webp: 'assets/pictures/webp.png'
         };
 
         const loadImage = (src) => {
@@ -105,7 +116,7 @@ class DesktopManager {
         this.context.drawImage(this.images.wallpaper, 0, 0, this.canvas.width, this.canvas.height);
 
         // Draw desktop icons and labels
-        if (!this.isNotesWindowOpen && !this.isSocialsWindowOpen) {
+        if (!this.isNotesWindowOpen && !this.isSocialsWindowOpen && !this.isProjectsWindowOpen) {
             this.items.forEach((item, index) => {
                 const icon = this.images[item.type];
                 const iconSize = 64;
@@ -250,6 +261,56 @@ class DesktopManager {
             });
         }
 
+        // Draw projects folder window if open
+        if (this.isProjectsWindowOpen) {
+            const projectsFolderImg = this.images.projectsFolder;
+            const windowWidth = this.canvas.width * 0.5;
+            const windowHeight = windowWidth * (projectsFolderImg.height / projectsFolderImg.width);
+            const windowX = (this.canvas.width - windowWidth) / 2;
+            const windowY = (this.canvas.height - windowHeight) / 2;
+            
+            // Draw the folder window background
+            this.context.drawImage(projectsFolderImg, windowX, windowY, windowWidth, windowHeight);
+            
+            // Draw project items inside the window
+            this.projectsItems.forEach((item, index) => {
+                const icon = this.images[item.type];
+                let iconSize = 64;
+                let iconWidth = iconSize;
+                let iconHeight = iconSize;
+                
+                if (item.type === 'exit') {
+                    iconWidth = 35;
+                    iconHeight = 17;
+                }
+                
+                this.context.drawImage(icon, item.x, item.y, iconWidth, iconHeight);
+                
+                if (index === this.projectsSelection) {
+                    this.context.globalAlpha = 1;
+                    const selectionWidth = item.type === 'exit' ? iconWidth + 20 : iconSize + 20;
+                    const selectionHeight = item.type === 'exit' ? iconHeight + 35 : iconSize + 35;
+                    
+                    this.context.drawImage(
+                        this.images.selection, 
+                        item.x-10, 
+                        item.y-18, 
+                        selectionWidth,
+                        selectionHeight
+                    );
+                    this.context.globalAlpha = 1.0;
+                }
+                
+                // Only draw labels for non-exit icons
+                if (item.type !== 'exit') {
+                    this.context.fillStyle = '#000000';
+                    this.context.font = '12px Arial';
+                    this.context.textAlign = 'center';
+                    this.context.fillText(item.name, item.x + iconSize/2, item.y + iconSize + 15);
+                }
+            });
+        }
+
         this.texture.needsUpdate = true;
     }
 
@@ -259,10 +320,11 @@ class DesktopManager {
 
     handleKeydown(event) {
         let newSelection = this.isNotesWindowOpen ? this.notesSelection : 
-                          this.isSocialsWindowOpen ? this.socialsSelection : 
+                          this.isSocialsWindowOpen ? this.socialsSelection :
+                          this.isProjectsWindowOpen ? this.projectsSelection :
                           this.currentSelection;
 
-        if (!this.isAboutWindowOpen && !this.isNotesWindowOpen && !this.isSocialsWindowOpen) {
+        if (!this.isAboutWindowOpen && !this.isNotesWindowOpen && !this.isSocialsWindowOpen && !this.isProjectsWindowOpen) {
             switch(event.key) {
                 case 'ArrowRight':
                     newSelection = (newSelection + 1) % this.items.length;
@@ -327,10 +389,36 @@ class DesktopManager {
                     }
                     return;
             }
+        } else if (this.isProjectsWindowOpen) {
+            switch(event.key) {
+                case 'ArrowRight':
+                    newSelection = (newSelection + 1) % this.projectsItems.length;
+                    break;
+                case 'ArrowLeft':
+                    newSelection = (newSelection - 1 + this.projectsItems.length) % this.projectsItems.length;
+                    break;
+                case 'ArrowUp':
+                    if (newSelection >= 4) newSelection -= 4;
+                    break;
+                case 'ArrowDown':
+                    if (newSelection < 4) newSelection += 4;
+                    break;
+                case 'Enter':
+                    const selectedProject = this.projectsItems[this.projectsSelection];
+                    if (selectedProject.type === 'exit') {
+                        this.isProjectsWindowOpen = false;
+                        this.render();
+                    } else if (selectedProject.type === 'pdf') {
+                        window.open(`assets/pdf/Business Intelligence Project.pdf`, '_blank');
+                    } else {
+                        window.open(selectedProject.url, '_blank');
+                    }
+                    return;
+            }
         }
 
         if (event.key === 'Enter') {
-            if (!this.isNotesWindowOpen && !this.isSocialsWindowOpen && 
+            if (!this.isNotesWindowOpen && !this.isSocialsWindowOpen && !this.isProjectsWindowOpen &&
                 this.currentSelection >= 0 && this.currentSelection < this.items.length) {
                 const selectedItem = this.items[this.currentSelection];
                 if (selectedItem.type === 'terminal' && !this.isAboutWindowOpen) {
@@ -354,6 +442,10 @@ class DesktopManager {
                     this.isSocialsWindowOpen = !this.isSocialsWindowOpen;
                     this.socialsSelection = 0;
                     this.render();
+                } else if (selectedItem.name === 'projects') {
+                    this.isProjectsWindowOpen = !this.isProjectsWindowOpen;
+                    this.projectsSelection = 0;
+                    this.render();
                 }
             }
         }
@@ -362,6 +454,8 @@ class DesktopManager {
             this.notesSelection = newSelection;
         } else if (this.isSocialsWindowOpen) {
             this.socialsSelection = newSelection;
+        } else if (this.isProjectsWindowOpen) {
+            this.projectsSelection = newSelection;
         } else {
             this.currentSelection = newSelection;
         }
@@ -414,9 +508,11 @@ class DesktopManager {
         this.isNotesWindowOpen = false;
         this.isContactWindowOpen = false;
         this.isSocialsWindowOpen = false;
+        this.isProjectsWindowOpen = false;
         this.currentSelection = 0;
         this.notesSelection = 0;
         this.socialsSelection = 0;
+        this.projectsSelection = 0;
     }
 }
 

@@ -47,7 +47,10 @@ export const MESSAGES = {
 
     // projects dir
 
-    PROJECT_LS: 'project1.txt',
+    PROJECT_LS: [
+        'PowerBI Dashboard.pdf  Portfolio.webp',
+        'TypeSpeed.webp         Language Tool.webp'
+    ].join('\n'),
 
     PROJECT1: 'test',
 

@@ -167,8 +167,18 @@ class InputManager {
                     this.currentDirectory = '~';
                     response = '';  // Set empty response instead of return
                     break;
-                case 'cat project1.txt':
-                    return MESSAGES.PROJECT1;
+                case 'open PowerBI Dashboard.pdf':
+                    window.open('assets/pdf/Business Intelligence Project.pdf', '_blank');
+                    return MESSAGES.OPENING_PDF;
+                case 'open TypeSpeed.webp':
+                    window.open('https://github.com/MaxChung525/TypeSpeed', '_blank');
+                    return MESSAGES.WEBSITE;
+                case 'open Portfolio.webp':
+                    window.open('https://maxchung525.github.io/', '_blank');
+                    return MESSAGES.WEBSITE;
+                case 'open Language Tool.webp':
+                    window.open('https://github.com/MaxChung525/Language-Tool', '_blank');
+                    return MESSAGES.WEBSITE;
                 default:
                     return MESSAGES.COMMAND_NOT_FOUND(command);
             }
