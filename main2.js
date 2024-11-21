@@ -27,22 +27,49 @@ class App {
     }
 
     async init() {
-        // Load models only once
-        if (!this.modelsLoaded) {
-            const models = await this.modelLoader.loadModel();
-            this.modelsLoaded = true;
-            
-            // Store references if needed
-            this.computerModel = models.computerModel;
-            this.coffeeModel = models.coffeeModel;
-            this.tableModel = models.tableModel;
-            this.pictureFrameModel = models.pictureFrameModel;
-            this.penholderModel = models.penholderModel;
+        const loadingScreen = document.getElementById('loading-screen');
+        const startTime = Date.now();
+        const minimumLoadTime = 2000; // 2 seconds minimum loading time
 
-            // Simulate 'quit' command by default to show desktop
-            if (this.inputManager) {
-                this.inputManager.switchToDesktop();
+        try {
+            // Load models
+            if (!this.modelsLoaded) {
+                const models = await this.modelLoader.loadModel();
+                this.modelsLoaded = true;
+                
+                // Store references if needed
+                this.computerModel = models.computerModel;
+                this.coffeeModel = models.coffeeModel;
+                this.tableModel = models.tableModel;
+                this.pictureFrameModel = models.pictureFrameModel;
+                this.penholderModel = models.penholderModel;
+
+                // Simulate 'quit' command by default to show desktop
+                if (this.inputManager) {
+                    this.inputManager.switchToDesktop();
+                }
             }
+
+            // Calculate how long the loading has taken
+            const loadingDuration = Date.now() - startTime;
+            
+            // If loading was faster than minimum time, wait for the remaining time
+            if (loadingDuration < minimumLoadTime) {
+                await new Promise(resolve => 
+                    setTimeout(resolve, minimumLoadTime - loadingDuration)
+                );
+            }
+
+            // Hide loading screen with fade out
+            loadingScreen.style.transition = 'opacity 1.5s ease-in-out';
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 1500);
+
+        } catch (error) {
+            console.error('Error during initialization:', error);
+            // Handle error - maybe show error message in loading screen
         }
         
         window.addEventListener('resize', () => this.sceneManager.onWindowResize(), false);
