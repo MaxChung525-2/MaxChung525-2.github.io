@@ -28,6 +28,9 @@ class App {
 
     async init() {
         const loadingScreen = document.getElementById('loading-screen');
+        const loadingLeft = document.getElementById('loading-left');
+        const loadingRight = document.getElementById('loading-right');
+        const loader = loadingScreen.querySelector('.loader');
         const startTime = Date.now();
         const minimumLoadTime = 2000; // 2 seconds minimum loading time
 
@@ -60,9 +63,15 @@ class App {
                 );
             }
 
-            // Hide loading screen with fade out
-            loadingScreen.style.transition = 'opacity 1.5s ease-in-out';
-            loadingScreen.style.opacity = '0';
+            // Hide loader first
+            loader.style.opacity = '0';
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Animate the split
+            loadingLeft.style.transform = 'translateX(-100%)';
+            loadingRight.style.transform = 'translateX(100%)';
+
+            // Remove the loading screen after animation
             setTimeout(() => {
                 loadingScreen.style.display = 'none';
             }, 1500);
